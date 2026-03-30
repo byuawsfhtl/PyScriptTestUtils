@@ -1,9 +1,10 @@
 /**
  * Consumer entry: register domain handlers, then serve JSON-RPC lines from argv.
- * Adjust the FlexibleDate import to your package layout when publishing elsewhere.
+ * FlexibleDate comes from the local package (file:../FlexibleDate/FlexibleDateTS) so
+ * imports work from dist/ (relative ../ paths would break once compiled into dist/).
  */
-import FlexibleDate from "../FlexibleDate/FlexibleDateTS/dist/FlexibleDateTS";
-import { PyScriptTestBridge, TestRequest, TestResponse } from "./PyScriptTestBridge";
+import FlexibleDate from "flexibledatets";
+import { PyScriptTestBridge } from "./PyScriptTestBridge";
 
 function serializeFlexibleDate(fd: FlexibleDate): any {
     return {

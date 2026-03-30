@@ -1,10 +1,16 @@
 from pathlib import Path
 import pytest
 from PyScriptTestRunner import PyScriptTestRunner
-from FlexibleDate.FlexibleDate import create_flexible_date, create_flexible_date_from_formal_date
+from FlexibleDate.FlexibleDate import (
+    FlexibleDate,
+    create_flexible_date,
+    create_flexible_date_from_formal_date,
+)
 
 runner = PyScriptTestRunner(
-    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js",
+    serializer = lambda d: {"likelyYear": d.likely_year, "likelyMonth": d.likely_month, "likelyDay": d.likely_day},
+    deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
 )
 
 runner.add_method(create_flexible_date, "createFlexibleDate")

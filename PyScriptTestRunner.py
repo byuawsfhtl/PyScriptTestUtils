@@ -24,6 +24,8 @@ class PyScriptTestRunner:
         self,
         ts_bridge_path: Path,
         package_root: Optional[Path] = None,
+        serializer: Optional[Callable[[Any], Any]] = None,
+        deserializer: Optional[Callable[[Any], Any]] = None
     ) -> None:
         assert isinstance(ts_bridge_path, Path)
         assert package_root is None or isinstance(package_root, Path)
@@ -32,6 +34,8 @@ class PyScriptTestRunner:
             package_root if package_root is not None else Path(__file__).resolve().parent
         )
         self.ts_bridge_path = ts_bridge_path
+        self.serializer = serializer
+        self.deserializer = deserializer
         self._by_py: Dict[str, RegisteredMethod] = {}
         self._by_ts: Dict[str, RegisteredMethod] = {}
 
@@ -183,7 +187,10 @@ class PyScriptTestRunner:
                 mock_context.__enter__()
 
             try:
-                return rec.py_fn(input_data)
+                result = rec.py_fn(input_data)
+                if self.serializer is not None:
+                    return self.serializer(result)
+                return result
             finally:
                 for mock_context in reversed(mock_contexts):
                     mock_context.__exit__(None, None, None)

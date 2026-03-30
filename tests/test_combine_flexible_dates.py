@@ -1,11 +1,15 @@
 from pathlib import Path
-from FlexibleDate.FlexibleDate import combine_flexible_dates
+from FlexibleDate.FlexibleDate import (
+    FlexibleDate,
+    combine_flexible_dates,
+)
 import pytest
 from PyScriptTestRunner import PyScriptTestRunner
 
-# Initialize the test runner (will handle environment setup automatically)
 runner = PyScriptTestRunner(
-    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js",
+    serializer = lambda d: {"likelyYear": d.likely_year, "likelyMonth": d.likely_month, "likelyDay": d.likely_day},
+    deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
 )
 
 runner.add_method(combine_flexible_dates, "combineFlexibleDates")

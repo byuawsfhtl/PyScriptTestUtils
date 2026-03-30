@@ -3,9 +3,10 @@ import pytest
 from PyScriptTestRunner import PyScriptTestRunner
 from FlexibleDate.FlexibleDate import FlexibleDate
 
-# Initialize the test runner (will handle environment setup automatically)
-test_runner = PyScriptTestRunner(
-    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+runner = PyScriptTestRunner(
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js",
+    serializer = lambda d: {"likelyYear": d.likely_year, "likelyMonth": d.likely_month, "likelyDay": d.likely_day},
+    deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
 )
 
 
@@ -49,7 +50,7 @@ class TestYearValidator:
     def test_valid_years(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = test_runner.run_dual_test(
+        py_result, ts_result = runner.run_dual_test(
             "test_validator",
             "testValidator",
             test_data
@@ -57,7 +58,7 @@ class TestYearValidator:
         
         assert py_result == test_case["expected"], f"Python failed for {test_case['description']}"
         assert ts_result == test_case["expected"], f"TypeScript failed for {test_case['description']}"
-        test_runner.assert_strict_parity(py_result, ts_result, test_case['description'])
+        runner.assert_strict_parity(py_result, ts_result, test_case['description'])
     
     invalid_year_cases = [
         {
@@ -82,7 +83,7 @@ class TestYearValidator:
     def test_invalid_years(self, test_case):
         test_data = {"input": test_case["input"], "expected": "ValueError", "mocks": {}}
         
-        py_result, ts_result = test_runner.run_dual_test(
+        py_result, ts_result = runner.run_dual_test(
             "test_validator",
             "testValidator",
             test_data
@@ -90,7 +91,7 @@ class TestYearValidator:
         
         assert py_result == "ValueError", f"Python should raise ValueError for {test_case['description']}"
         assert ts_result == "ValueError", f"TypeScript should raise ValueError for {test_case['description']}"
-        test_runner.assert_strict_parity(py_result, ts_result, test_case['description'])
+        runner.assert_strict_parity(py_result, ts_result, test_case['description'])
 
 
 class TestMonthValidator:
@@ -123,7 +124,7 @@ class TestMonthValidator:
     def test_valid_months(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = test_runner.run_dual_test(
+        py_result, ts_result = runner.run_dual_test(
             "test_validator",
             "testValidator",
             test_data
@@ -131,7 +132,7 @@ class TestMonthValidator:
         
         assert py_result == test_case["expected"], f"Python failed for {test_case['description']}"
         assert ts_result == test_case["expected"], f"TypeScript failed for {test_case['description']}"
-        test_runner.assert_strict_parity(py_result, ts_result, test_case['description'])
+        runner.assert_strict_parity(py_result, ts_result, test_case['description'])
     
     invalid_month_cases = [
         {
@@ -156,7 +157,7 @@ class TestMonthValidator:
     def test_invalid_months(self, test_case):
         test_data = {"input": test_case["input"], "expected": "ValueError", "mocks": {}}
         
-        py_result, ts_result = test_runner.run_dual_test(
+        py_result, ts_result = runner.run_dual_test(
             "test_validator",
             "testValidator",
             test_data
@@ -164,7 +165,7 @@ class TestMonthValidator:
         
         assert py_result == "ValueError", f"Python should raise ValueError for {test_case['description']}"
         assert ts_result == "ValueError", f"TypeScript should raise ValueError for {test_case['description']}"
-        test_runner.assert_strict_parity(py_result, ts_result, test_case['description'])
+        runner.assert_strict_parity(py_result, ts_result, test_case['description'])
 
 
 class TestDayValidator:
@@ -197,7 +198,7 @@ class TestDayValidator:
     def test_valid_days(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = test_runner.run_dual_test(
+        py_result, ts_result = runner.run_dual_test(
             "test_validator",
             "testValidator",
             test_data
@@ -205,7 +206,7 @@ class TestDayValidator:
         
         assert py_result == test_case["expected"], f"Python failed for {test_case['description']}"
         assert ts_result == test_case["expected"], f"TypeScript failed for {test_case['description']}"
-        test_runner.assert_strict_parity(py_result, ts_result, test_case['description'])
+        runner.assert_strict_parity(py_result, ts_result, test_case['description'])
     
     invalid_day_cases = [
         {
@@ -230,7 +231,7 @@ class TestDayValidator:
     def test_invalid_days(self, test_case):
         test_data = {"input": test_case["input"], "expected": "ValueError", "mocks": {}}
         
-        py_result, ts_result = test_runner.run_dual_test(
+        py_result, ts_result = runner.run_dual_test(
             "test_validator",
             "testValidator",
             test_data
@@ -238,5 +239,5 @@ class TestDayValidator:
         
         assert py_result == "ValueError", f"Python should raise ValueError for {test_case['description']}"
         assert ts_result == "ValueError", f"TypeScript should raise ValueError for {test_case['description']}"
-        test_runner.assert_strict_parity(py_result, ts_result, test_case['description'])
+        runner.assert_strict_parity(py_result, ts_result, test_case['description'])
 
