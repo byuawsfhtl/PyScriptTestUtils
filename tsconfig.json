@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["PyScriptTestBridge.ts", "test_bridge_entry.ts"]
+  "include": ["PyScriptTestBridge.ts", "test_bridge.ts"]
 }

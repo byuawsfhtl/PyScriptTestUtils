@@ -22,7 +22,7 @@ class PyScriptTestRunner:
 
     def __init__(
         self,
-        ts_bridge_path: Optional[Path] = None,
+        ts_bridge_path: Path,
         package_root: Optional[Path] = None,
     ) -> None:
         assert ts_bridge_path is None or isinstance(ts_bridge_path, Path)
@@ -31,11 +31,7 @@ class PyScriptTestRunner:
         self.package_root = (
             package_root if package_root is not None else Path(__file__).resolve().parent
         )
-        self.ts_bridge_path = (
-            ts_bridge_path
-            if ts_bridge_path is not None
-            else self.package_root / "dist" / "test_bridge_entry.js"
-        )
+        self.ts_bridge_path = ts_bridge_path
         self._by_py: Dict[str, RegisteredMethod] = {}
         self._by_ts: Dict[str, RegisteredMethod] = {}
 
