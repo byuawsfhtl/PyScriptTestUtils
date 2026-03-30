@@ -38,4 +38,33 @@ export class PyScriptTestBridge {
             };
         }
     }
+
+    /**
+     * Read one JSON-RPC request from argv, write one JSON line to stdout.
+     * Call this only from your entry script inside `if (require.main === module) { ... }`
+     * so `require.main` refers to that script (not this module).
+     */
+    runCli(argv: string[] = process.argv.slice(2)): void {
+        if (!Array.isArray(argv)) {
+            throw new TypeError("argv must be an array of strings");
+        }
+
+        try {
+            const request = JSON.parse(argv[0]) as TestRequest;
+            if (!request || typeof request !== "object" || Array.isArray(request)) {
+                throw new TypeError("Parsed request must be a plain object");
+            }
+            if (typeof request.method !== "string" || !Array.isArray(request.args)) {
+                throw new TypeError("Request must include string method and array args");
+            }
+            const response = this.processRequest(request);
+            console.log(JSON.stringify(response));
+        } catch (error) {
+            const errorResponse: TestResponse = {
+                success: false,
+                error: error instanceof Error ? error.message : String(error),
+            };
+            console.log(JSON.stringify(errorResponse));
+        }
+    }
 }
