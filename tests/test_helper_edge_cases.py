@@ -1,9 +1,12 @@
+from pathlib import Path
 from FlexibleDate.FlexibleDate import create_flexible_date
 import pytest
 from PyScriptTestRunner import PyScriptTestRunner
 
 # Initialize the test runner (will handle environment setup automatically)
-test_runner = PyScriptTestRunner()
+test_runner = PyScriptTestRunner(
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+)
 test_runner.add_method(create_flexible_date, "createFlexibleDate")
 
 

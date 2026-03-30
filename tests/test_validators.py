@@ -1,12 +1,12 @@
+from pathlib import Path
 import pytest
 from PyScriptTestRunner import PyScriptTestRunner
 from FlexibleDate.FlexibleDate import FlexibleDate
 
 # Initialize the test runner (will handle environment setup automatically)
-test_runner = PyScriptTestRunner()
-test_runner.add_method(FlexibleDate.validate_likely_year, "validateLikelyYear")
-test_runner.add_method(FlexibleDate.validate_likely_month, "validateLikelyMonth")
-test_runner.add_method(FlexibleDate.validate_likely_day, "validateLikelyDay")
+test_runner = PyScriptTestRunner(
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+)
 
 
 class TestYearValidator:

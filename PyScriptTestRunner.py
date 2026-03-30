@@ -25,7 +25,7 @@ class PyScriptTestRunner:
         ts_bridge_path: Path,
         package_root: Optional[Path] = None,
     ) -> None:
-        assert ts_bridge_path is None or isinstance(ts_bridge_path, Path)
+        assert isinstance(ts_bridge_path, Path)
         assert package_root is None or isinstance(package_root, Path)
 
         self.package_root = (

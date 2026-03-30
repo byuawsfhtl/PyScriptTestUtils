@@ -1,10 +1,12 @@
+from pathlib import Path
 import pytest
 from PyScriptTestRunner import PyScriptTestRunner
 from FlexibleDate.FlexibleDate import compare_two_dates
 
 # Initialize the test runner (will handle environment setup automatically)
-test_runner = PyScriptTestRunner()
-test_runner.add_method(compare_two_dates, "compareDates")
+test_runner = PyScriptTestRunner(
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+)
 
 class TestIdenticalDates:
     """Test comparison of identical dates returns perfect score of 100."""

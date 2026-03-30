@@ -1,7 +1,15 @@
+from pathlib import Path
+from FlexibleDate.FlexibleDate import FlexibleDate
 import pytest
 from PyScriptTestRunner import PyScriptTestRunner
 
-runner = PyScriptTestRunner()
+runner = PyScriptTestRunner(
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+)
+
+runner.add_method(FlexibleDate.__bool__, "testBool")
+runner.add_method(FlexibleDate.__str__, "testStr")
+runner.add_method(FlexibleDate.__repr__, "testRepr")
 
 
 class TestBoolMethod:

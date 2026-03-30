@@ -1,9 +1,12 @@
+from pathlib import Path
 from FlexibleDate.FlexibleDate import combine_flexible_dates
 import pytest
 from PyScriptTestRunner import PyScriptTestRunner
 
 # Initialize the test runner (will handle environment setup automatically)
-runner = PyScriptTestRunner()
+runner = PyScriptTestRunner(
+    Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js"
+)
 
 runner.add_method(combine_flexible_dates, "combineFlexibleDates")
 
