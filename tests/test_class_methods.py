@@ -9,9 +9,10 @@ runner = PyScriptTestRunner(
     deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
 )
 
-runner.add_method(FlexibleDate.__bool__, "testBool")
-runner.add_method(FlexibleDate.__str__, "testStr")
-runner.add_method(FlexibleDate.__repr__, "testRepr")
+runner.add_method(FlexibleDate.__bool__, "FlexibleDate.valueOf")
+runner.add_method(FlexibleDate.__str__, "FlexibleDate.toString")
+runner.add_method(FlexibleDate.__repr__, "FlexibleDate.inspect")
+runner.add_method(FlexibleDate.__eq__, "FlexibleDate.equals")
 
 
 class TestBoolMethod:
@@ -64,8 +65,8 @@ class TestBoolMethod:
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
         py_result, ts_result = runner.run_dual_test(
-            "test_bool",
-            "testBool",
+            "FlexibleDate.__bool__",
+            "FlexibleDate.valueOf",
             test_data
         )
         
