@@ -13,7 +13,7 @@ runner = PyScriptTestRunner(
     deserializer = lambda d: FlexibleDate(likely_day=d["likelyDay"], likely_month=d["likelyMonth"], likely_year=d["likelyYear"]),
 )
 
-runner.add_method(compare_two_dates, "compareDates", executor=lambda d: compare_two_dates(runner.deserializer(d[0]), runner.deserializer(d[1])))
+runner.add_method(compare_two_dates, "compareDates", executor=lambda d: compare_two_dates(d[0], d[1]))
 
 class TestIdenticalDates:
     """Test comparison of identical dates returns perfect score of 100."""

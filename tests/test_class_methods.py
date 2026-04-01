@@ -8,10 +8,10 @@ runner = PyScriptTestRunner(
     deserializer = lambda d: FlexibleDate(likely_day=d["likelyDay"], likely_month=d["likelyMonth"], likely_year=d["likelyYear"]),
 )
 
-runner.add_method(FlexibleDate.__bool__, "FlexibleDate.valueOf", executor=lambda d: bool(runner.deserializer(d)))
-runner.add_method(FlexibleDate.__str__, "FlexibleDate.toString", executor=lambda d: str(runner.deserializer(d)))
-runner.add_method(FlexibleDate.__repr__, "FlexibleDate.inspect", executor=lambda d: repr(runner.deserializer(d)))
-runner.add_method(FlexibleDate.__eq__, "FlexibleDate.equals", executor=lambda d: runner.deserializer(d[0]) == runner.deserializer(d[1]))
+runner.add_method(FlexibleDate.__bool__, "FlexibleDate.valueOf", executor=lambda d: bool(d))
+runner.add_method(FlexibleDate.__str__, "FlexibleDate.toString", executor=lambda d: str(d))
+runner.add_method(FlexibleDate.__repr__, "FlexibleDate.inspect", executor=lambda d: repr(d))
+runner.add_method(FlexibleDate.__eq__, "FlexibleDate.equals", executor=lambda d: d[0] == d[1])
 
 
 class TestBoolMethod:

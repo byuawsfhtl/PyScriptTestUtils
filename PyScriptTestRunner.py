@@ -25,8 +25,8 @@ class PyScriptTestRunner:
         self,
         ts_bridge_path: Path,
         package_root: Optional[Path] = None,
-        serializer: Optional[Callable[[Any], Any]] = None,
-        deserializer: Optional[Callable[[Any], Any]] = None
+        serializer: Callable[[Any], Any] = lambda d: d,
+        deserializer: Callable[[Any], Any] = lambda d: d
     ) -> None:
         assert isinstance(ts_bridge_path, Path)
         assert package_root is None or isinstance(package_root, Path)
@@ -35,8 +35,17 @@ class PyScriptTestRunner:
             package_root if package_root is not None else Path(__file__).resolve().parent
         )
         self.ts_bridge_path = ts_bridge_path
-        self.serializer = serializer if serializer is not None else lambda d: d
-        self.deserializer = deserializer if deserializer is not None else lambda d: d
+        
+        self.serializer = serializer
+        
+        def list_deserializer(d):
+            if isinstance(d, list):
+                try: d = [deserializer(d) for d in d]
+                except: pass
+            try: return deserializer(d)
+            except: return d
+        self.deserializer = list_deserializer
+        
         self._by_py: Dict[str, RegisteredMethod] = {}
         self._by_ts: Dict[str, RegisteredMethod] = {}
 
@@ -179,9 +188,9 @@ class PyScriptTestRunner:
 
             try:
                 if rec.executor is not None:
-                    result = rec.executor(input_data)
+                    result = rec.executor(self.deserializer(input_data))
                 else:
-                    result = rec.py_fn(input_data)
+                    result = rec.py_fn(self.deserializer(input_data))
                 try: return self.serializer(result)
                 except: return result
             finally:

@@ -12,7 +12,7 @@ runner = PyScriptTestRunner(
     deserializer = lambda d: FlexibleDate(likely_day=d["likelyDay"], likely_month=d["likelyMonth"], likely_year=d["likelyYear"]),
 )
 
-runner.add_method(combine_flexible_dates, "combineFlexibleDates", executor=lambda dl: combine_flexible_dates([runner.deserializer(d) for d in dl]))
+runner.add_method(combine_flexible_dates, "combineFlexibleDates")
 
 class TestBasicCombining:
     """Test fundamental combining operations."""
