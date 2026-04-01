@@ -9,10 +9,22 @@ export interface TestResponse {
     error?: string;
 }
 
-export type TestMethodHandler = (args: any[]) => TestResponse;
+export type TestMethodHandler = (args: any[]) => any;
 
 export class PyScriptTestBridge {
+
+    constructor(
+        private readonly serializer: (data: any) => any = (data: any) => data,
+        private readonly plainDeserializer: (data: any) => any = (data: any) => data,
+    ) {}
+
     private readonly handlers = new Map<string, TestMethodHandler>();
+    private readonly deserializer: any = (data: any) => {
+        if (Array.isArray(data)) {
+            try { return data.map(this.plainDeserializer); } catch { return data; }
+        }
+        try { return this.plainDeserializer(data); } catch { return data; }
+    };
 
     addMethod(tsMethodName: string, handler: TestMethodHandler): void {
         if (!tsMethodName || !String(tsMethodName).trim()) {
@@ -30,7 +42,16 @@ export class PyScriptTestBridge {
             return { success: false, error: `Unknown method: ${request.method}` };
         }
         try {
-            return handler(request.args);
+            console.error(request);
+            console.error(this.deserializer(request.args));
+            const result = handler(this.deserializer(request.args))
+            console.error(result);
+            console.error(this.serializer(result));
+            try { 
+                return {success: true, result: this.serializer(result)};
+            } catch {
+                return {success: true, result: result};
+            }
         } catch (error) {
             return {
                 success: false,

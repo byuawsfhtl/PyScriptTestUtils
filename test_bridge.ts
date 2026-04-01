@@ -7,83 +7,51 @@ import FlexibleDate from "flexibledatets";
 import { PyScriptTestBridge } from "./PyScriptTestBridge";
 
 function serializeFlexibleDate(fd: FlexibleDate): any {
-    return {
-        likelyYear: fd.likelyYear,
-        likelyMonth: fd.likelyMonth,
-        likelyDay: fd.likelyDay,
-    };
+    if (fd.constructor.name === "FlexibleDate") {
+        return {
+            likelyYear: fd.likelyYear,
+            likelyMonth: fd.likelyMonth,
+            likelyDay: fd.likelyDay,
+        };
+    }
+    return fd;
 }
 
 function deserializeFlexibleDate(data: any): FlexibleDate {
     return new FlexibleDate(data.likelyDay, data.likelyMonth, data.likelyYear);
 }
 
-const bridge = new PyScriptTestBridge();
+const bridge = new PyScriptTestBridge(serializeFlexibleDate, deserializeFlexibleDate);
 
-bridge.addMethod("createFlexibleDate", (args) => {
-    const [dateString] = args;
-    const fd = new FlexibleDate(dateString);
-    return { success: true, result: serializeFlexibleDate(fd) };
-});
+bridge.addMethod("createFlexibleDate", (args) => new FlexibleDate(args[0]));
 
 bridge.addMethod("createFlexibleDateFromFormalDate", (args) => {
-    const [formalDateString] = args;
-    const fdFromFormal = new FlexibleDate(null, null, null);
-    const result = fdFromFormal.createFlexibleDateFromFormalDate(formalDateString);
-    return { success: true, result: serializeFlexibleDate(result) };
+    const fd = new FlexibleDate(null, null, null);
+    return fd.createFlexibleDateFromFormalDate(args[0]);
 });
 
-bridge.addMethod("compareDates", (args) => {
-    const [date1Data, date2Data] = args;
-    const fd1 = deserializeFlexibleDate(date1Data);
-    const fd2 = deserializeFlexibleDate(date2Data);
-    const score = fd1.compareDates(fd2);
-    return { success: true, result: score };
-});
+bridge.addMethod("compareDates", (args) => args[0].compareDates(args[1]));
 
 bridge.addMethod("combineFlexibleDates", (args) => {
-    const dates = args.map((d: any) => deserializeFlexibleDate(d));
-    const fd_temp = new FlexibleDate(null, null, null);
-    const combined = fd_temp.combineFlexibleDates(dates);
-    return {
-        success: true,
-        result: serializeFlexibleDate(combined)
-    };
+    const dates = args[0] as FlexibleDate[];
+    const fdTemp = new FlexibleDate(null, null, null);
+    return fdTemp.combineFlexibleDates(dates);
 });
 
-bridge.addMethod("FlexibleDate.toString", (args) => {
-    const [fdData] = args;
-    const fdForString = deserializeFlexibleDate(fdData);
-    return { success: true, result: fdForString.toString() };
-});
+bridge.addMethod("FlexibleDate.toString", (args) => args[0].toString());
 
-bridge.addMethod("FlexibleDate.valueOf", (args) => {
-    const [fdDataValue] = args;
-    const fdForValue = deserializeFlexibleDate(fdDataValue);
-    return { success: true, result: fdForValue.valueOf() };
-});
+bridge.addMethod("FlexibleDate.valueOf", (args) => args[0].valueOf());
 
-bridge.addMethod("FlexibleDate.inspect", (args) => {
-    const [fdDataRepr] = args;
-    const fdForRepr = deserializeFlexibleDate(fdDataRepr);
-    return { success: true, result: fdForRepr.inspect() };
-});
+bridge.addMethod("FlexibleDate.inspect", (args) => args[0].inspect());
 
-bridge.addMethod("FlexibleDate.equals", (args) => {
-    const [fdDataEquals1, fdDataEquals2] = args;
-    const fdForEquals1 = deserializeFlexibleDate(fdDataEquals1);
-    const fdForEquals2 = deserializeFlexibleDate(fdDataEquals2);
-    return { success: true, result: fdForEquals1.equals(fdForEquals2) };
-});
+bridge.addMethod("FlexibleDate.equals", (args) => args[0].equals(args[1]));
 
 bridge.addMethod("testValidator", (args) => {
-    try {
-        const [fdDataValidator] = args;
-        const fdForValidator = deserializeFlexibleDate(fdDataValidator);
-        return { success: true, result: serializeFlexibleDate(fdForValidator) };
-    } catch {
-        return { success: true, result: "ValueError" };
+    const [x] = args;
+    if (x instanceof FlexibleDate) {
+        return x;
     }
+    return "ValueError";
 });
 
 if (require.main === module) {
