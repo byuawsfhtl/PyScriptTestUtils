@@ -42,11 +42,7 @@ export class PyScriptTestBridge {
             return { success: false, error: `Unknown method: ${request.method}` };
         }
         try {
-            console.error(request);
-            console.error(this.deserializer(request.args));
             const result = handler(this.deserializer(request.args))
-            console.error(result);
-            console.error(this.serializer(result));
             try { 
                 return {success: true, result: this.serializer(result)};
             } catch {
