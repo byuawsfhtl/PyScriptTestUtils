@@ -10,9 +10,10 @@ from tests.test_validators import runner
 
 runner = PyScriptTestRunner(
     Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js",
-    serializer = lambda d: {"likelyYear": d.likely_year, "likelyMonth": d.likely_month, "likelyDay": d.likely_day},
-    deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
+    deserializer = lambda d: FlexibleDate(likely_day=d["likelyDay"], likely_month=d["likelyMonth"], likely_year=d["likelyYear"]),
 )
+
+runner.add_method(compare_two_dates, "compareDates", executor=lambda d: compare_two_dates(runner.deserializer(d[0]), runner.deserializer(d[1])))
 
 class TestIdenticalDates:
     """Test comparison of identical dates returns perfect score of 100."""
