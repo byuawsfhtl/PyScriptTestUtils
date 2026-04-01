@@ -9,10 +9,10 @@ from PyScriptTestRunner import PyScriptTestRunner
 runner = PyScriptTestRunner(
     Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js",
     serializer = lambda d: {"likelyYear": d.likely_year, "likelyMonth": d.likely_month, "likelyDay": d.likely_day},
-    deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
+    deserializer = lambda d: FlexibleDate(likely_day=d["likelyDay"], likely_month=d["likelyMonth"], likely_year=d["likelyYear"]),
 )
 
-runner.add_method(combine_flexible_dates, "combineFlexibleDates")
+runner.add_method(combine_flexible_dates, "combineFlexibleDates", executor=lambda dl: combine_flexible_dates([runner.deserializer(d) for d in dl]))
 
 class TestBasicCombining:
     """Test fundamental combining operations."""

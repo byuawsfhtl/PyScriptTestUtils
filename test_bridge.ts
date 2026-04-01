@@ -42,11 +42,13 @@ bridge.addMethod("compareDates", (args) => {
 });
 
 bridge.addMethod("combineFlexibleDates", (args) => {
-    const [datesData] = args;
-    const dates = datesData.map((d: any) => deserializeFlexibleDate(d));
-    const fdTemp = new FlexibleDate(null, null, null);
-    const combined = fdTemp.combineFlexibleDates(dates);
-    return { success: true, result: serializeFlexibleDate(combined) };
+    const dates = args.map((d: any) => deserializeFlexibleDate(d));
+    const fd_temp = new FlexibleDate(null, null, null);
+    const combined = fd_temp.combineFlexibleDates(dates);
+    return {
+        success: true,
+        result: serializeFlexibleDate(combined)
+    };
 });
 
 bridge.addMethod("FlexibleDate.toString", (args) => {
