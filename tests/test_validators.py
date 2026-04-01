@@ -10,11 +10,10 @@ runner = PyScriptTestRunner(
 )
 
 def executor(d):
-    try:
-        fd = runner.deserializer(d)
-        return fd
-    except ValueError:
+    fd = runner.deserializer(d)
+    if not isinstance(fd, FlexibleDate):
         return "ValueError"
+    return fd
 
 runner.add_method(FlexibleDate.__init__, "testValidator", executor=executor)
 
