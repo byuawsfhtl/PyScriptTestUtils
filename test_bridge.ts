@@ -18,7 +18,12 @@ function serializeFlexibleDate(fd: FlexibleDate): any {
 }
 
 function deserializeFlexibleDate(data: any): FlexibleDate {
-    return new FlexibleDate(data.likelyDay, data.likelyMonth, data.likelyYear);
+    if ("likelyDay" in data &&
+        "likelyMonth" in data &&
+        "likelyYear" in data) {
+        return new FlexibleDate(data.likelyDay, data.likelyMonth, data.likelyYear);
+    }
+    return data;
 }
 
 const bridge = new PyScriptTestBridge(serializeFlexibleDate, deserializeFlexibleDate);
@@ -33,7 +38,7 @@ bridge.addMethod("createFlexibleDateFromFormalDate", (args) => {
 bridge.addMethod("compareDates", (args) => args[0].compareDates(args[1]));
 
 bridge.addMethod("combineFlexibleDates", (args) => {
-    const dates = args[0] as FlexibleDate[];
+    const dates = args as FlexibleDate[];
     const fdTemp = new FlexibleDate(null, null, null);
     return fdTemp.combineFlexibleDates(dates);
 });
