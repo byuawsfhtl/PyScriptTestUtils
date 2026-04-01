@@ -5,14 +5,13 @@ from PyScriptTestRunner import PyScriptTestRunner
 
 runner = PyScriptTestRunner(
     Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js",
-    serializer = lambda d: {"likelyYear": d.likely_year, "likelyMonth": d.likely_month, "likelyDay": d.likely_day},
-    deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
+    deserializer = lambda d: FlexibleDate(likely_day=d["likelyDay"], likely_month=d["likelyMonth"], likely_year=d["likelyYear"]),
 )
 
-runner.add_method(FlexibleDate.__bool__, "FlexibleDate.valueOf")
-runner.add_method(FlexibleDate.__str__, "FlexibleDate.toString")
-runner.add_method(FlexibleDate.__repr__, "FlexibleDate.inspect")
-runner.add_method(FlexibleDate.__eq__, "FlexibleDate.equals")
+runner.add_method(FlexibleDate.__bool__, "FlexibleDate.valueOf", executor=lambda d: bool(runner.deserializer(d)))
+runner.add_method(FlexibleDate.__str__, "FlexibleDate.toString", executor=lambda d: str(runner.deserializer(d)))
+runner.add_method(FlexibleDate.__repr__, "FlexibleDate.inspect", executor=lambda d: repr(runner.deserializer(d)))
+runner.add_method(FlexibleDate.__eq__, "FlexibleDate.equals", executor=lambda d: runner.deserializer(d[0]) == runner.deserializer(d[1]))
 
 
 class TestBoolMethod:
@@ -176,8 +175,8 @@ class TestStrMethod:
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
         py_result, ts_result = runner.run_dual_test(
-            "test_str",
-            "testStr",
+            "FlexibleDate.__str__",
+            "FlexibleDate.toString",
             test_data
         )
         
@@ -252,8 +251,8 @@ class TestReprMethod:
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
         py_result, ts_result = runner.run_dual_test(
-            "test_repr",
-            "testRepr",
+            "FlexibleDate.__repr__",
+            "FlexibleDate.inspect",
             test_data
         )
         
@@ -312,8 +311,8 @@ class TestEqualsMethod:
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
         py_result, ts_result = runner.run_dual_test(
-            "test_equals",
-            "test_equals",
+            "FlexibleDate.__eq__",
+            "FlexibleDate.equals",
             test_data
         )
         

@@ -49,37 +49,25 @@ bridge.addMethod("combineFlexibleDates", (args) => {
     return { success: true, result: serializeFlexibleDate(combined) };
 });
 
-bridge.addMethod("toString", (args) => {
+bridge.addMethod("FlexibleDate.toString", (args) => {
     const [fdData] = args;
     const fdForString = deserializeFlexibleDate(fdData);
     return { success: true, result: fdForString.toString() };
 });
 
-bridge.addMethod("valueOf", (args) => {
+bridge.addMethod("FlexibleDate.valueOf", (args) => {
     const [fdDataValue] = args;
     const fdForValue = deserializeFlexibleDate(fdDataValue);
     return { success: true, result: fdForValue.valueOf() };
 });
 
-bridge.addMethod("testBool", (args) => {
-    const [fdDataBool] = args;
-    const fdForBool = deserializeFlexibleDate(fdDataBool);
-    return { success: true, result: fdForBool.valueOf() };
-});
-
-bridge.addMethod("testStr", (args) => {
-    const [fdDataStr] = args;
-    const fdForStr = deserializeFlexibleDate(fdDataStr);
-    return { success: true, result: fdForStr.toString() };
-});
-
-bridge.addMethod("testRepr", (args) => {
+bridge.addMethod("FlexibleDate.inspect", (args) => {
     const [fdDataRepr] = args;
     const fdForRepr = deserializeFlexibleDate(fdDataRepr);
     return { success: true, result: fdForRepr.inspect() };
 });
 
-bridge.addMethod("test_equals", (args) => {
+bridge.addMethod("FlexibleDate.equals", (args) => {
     const [fdDataEquals1, fdDataEquals2] = args;
     const fdForEquals1 = deserializeFlexibleDate(fdDataEquals1);
     const fdForEquals2 = deserializeFlexibleDate(fdDataEquals2);

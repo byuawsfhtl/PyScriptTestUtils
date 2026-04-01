@@ -9,8 +9,9 @@ from unittest.mock import patch
 
 @dataclass(frozen=True)
 class RegisteredMethod:
-    py_fn: Callable[[Any], Any]
+    py_fn: Callable[..., Any]
     ts_name: str
+    executor: Optional[Callable[..., Any]] = None
     ts_pack_input: bool = False
 
 
@@ -34,8 +35,8 @@ class PyScriptTestRunner:
             package_root if package_root is not None else Path(__file__).resolve().parent
         )
         self.ts_bridge_path = ts_bridge_path
-        self.serializer = serializer
-        self.deserializer = deserializer
+        self.serializer = serializer if serializer is not None else lambda d: d
+        self.deserializer = deserializer if deserializer is not None else lambda d: d
         self._by_py: Dict[str, RegisteredMethod] = {}
         self._by_ts: Dict[str, RegisteredMethod] = {}
 
@@ -46,15 +47,16 @@ class PyScriptTestRunner:
 
     def add_method(
         self,
-        py_callable: Callable[[Any], Any],
+        py_callable: Callable[..., Any],
         ts_method_name: str,
+        executor: Optional[Callable[..., Any]] = None,
         *,
         ts_pack_input: bool = False,
     ) -> None:
         assert callable(py_callable)
         if not ts_method_name or not str(ts_method_name).strip():
             raise ValueError("ts_method_name must be non-empty")
-        py_key = getattr(py_callable, "__name__", None)
+        py_key = getattr(py_callable, "__qualname__", None) or getattr(py_callable, "__name__", None)
         if not py_key or py_key == "<lambda>":
             raise ValueError("py_callable must be a named function (not lambda or <lambda>)")
 
@@ -64,7 +66,10 @@ class PyScriptTestRunner:
             raise ValueError(f"Duplicate TypeScript registration: {ts_method_name!r}")
 
         rec = RegisteredMethod(
-            py_fn=py_callable, ts_name=ts_method_name, ts_pack_input=ts_pack_input
+            py_fn=py_callable,
+            ts_name=ts_method_name,
+            executor=executor,
+            ts_pack_input=ts_pack_input,
         )
         self._by_py[py_key] = rec
         self._by_ts[ts_method_name] = rec
@@ -187,7 +192,10 @@ class PyScriptTestRunner:
                 mock_context.__enter__()
 
             try:
-                result = rec.py_fn(input_data)
+                if rec.executor is not None:
+                    result = rec.executor(input_data)
+                else:
+                    result = rec.py_fn(input_data)
                 if self.serializer is not None:
                     return self.serializer(result)
                 return result
