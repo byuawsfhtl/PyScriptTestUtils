@@ -63,7 +63,7 @@ class TestBasicCombining:
     def test_basic_combining(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -112,7 +112,7 @@ class TestConsensus:
     def test_perfect_consensus(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -168,7 +168,7 @@ class TestConsensus:
     def test_majority_agreement(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -240,7 +240,7 @@ class TestProximityScoring:
     def test_proximity_scoring(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -311,7 +311,7 @@ class TestPartialDates:
     def test_partial_dates(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -382,7 +382,7 @@ class TestNullValues:
     def test_null_values(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -439,7 +439,7 @@ class TestTieBreaking:
     def test_tie_breaking(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -506,7 +506,7 @@ class TestMixedPrecision:
     def test_mixed_precision(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data
@@ -607,7 +607,7 @@ class TestEdgeCases:
     def test_edge_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "combine_flexible_dates",
             "combineFlexibleDates",
             test_data

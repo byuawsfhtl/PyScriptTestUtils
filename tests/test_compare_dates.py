@@ -48,7 +48,7 @@ class TestIdenticalDates:
     @pytest.mark.parametrize("test_case", test_cases, ids=lambda x: x['description'])
     def test_identical_full_dates(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -88,7 +88,7 @@ class TestIdenticalDates:
     def test_edge_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -132,7 +132,7 @@ class TestSimilarDates:
     def test_one_day_different_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -173,7 +173,7 @@ class TestSimilarDates:
     def test_one_month_different_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -206,7 +206,7 @@ class TestSimilarDates:
     def test_one_year_different_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -247,7 +247,7 @@ class TestSimilarDates:
     def test_year_only_five_years_different_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -296,7 +296,7 @@ class TestSimilarDates:
     def test_partial_date_comparisons_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -361,7 +361,7 @@ class TestSimilarDates:
     def test_scoring_boundaries_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data
@@ -414,7 +414,7 @@ class TestBadDates:
     def test_very_different_dates_cases(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "compare_two_dates",
             "compareDates",
             test_data

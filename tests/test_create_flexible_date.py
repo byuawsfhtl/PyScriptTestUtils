@@ -69,7 +69,7 @@ class TestCreateFlexibleDate:
         def test_full_date_parsing(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -119,7 +119,7 @@ class TestCreateFlexibleDate:
         def test_partial_date_parsing(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -154,7 +154,7 @@ class TestCreateFlexibleDate:
         def test_null_and_empty_inputs(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -189,7 +189,7 @@ class TestCreateFlexibleDate:
         def test_invalid_date_exception_handling(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -243,7 +243,7 @@ class TestCreateFlexibleDateFromFormalDate:
         def test_full_edtf_parsing(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date_from_formal_date",
                 "createFlexibleDateFromFormalDate",
                 test_data
@@ -293,7 +293,7 @@ class TestCreateFlexibleDateFromFormalDate:
         def test_partial_edtf_parsing(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date_from_formal_date",
                 "createFlexibleDateFromFormalDate",
                 test_data
@@ -329,7 +329,7 @@ class TestCreateFlexibleDateFromFormalDate:
                 "expected_error": test_case["expected_error"],
                 "mocks": {}
             }
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date_from_formal_date",
                 "createFlexibleDateFromFormalDate",
                 test_data

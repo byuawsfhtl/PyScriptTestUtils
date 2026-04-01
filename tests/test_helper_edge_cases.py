@@ -72,7 +72,7 @@ class TestEdgeCases:
         def test_ancient_dates(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -152,7 +152,7 @@ class TestEdgeCases:
         def test_text_cleaning(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -192,7 +192,7 @@ class TestEdgeCases:
         def test_decades(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -227,7 +227,7 @@ class TestEdgeCases:
         def test_ampm_handling(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -262,7 +262,7 @@ class TestEdgeCases:
         def test_special_characters(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -292,7 +292,7 @@ class TestEdgeCases:
         def test_parser_edge_cases(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data
@@ -317,7 +317,7 @@ class TestEdgeCases:
         def test_complex_gleaning(self, test_case):
             test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
             
-            py_result, ts_result = runner.run_dual_test(
+            py_result, ts_result = runner.run(
                 "create_flexible_date",
                 "createFlexibleDate",
                 test_data

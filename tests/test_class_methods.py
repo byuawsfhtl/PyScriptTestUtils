@@ -63,7 +63,7 @@ class TestBoolMethod:
     def test_bool_method(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "FlexibleDate.__bool__",
             "FlexibleDate.valueOf",
             test_data
@@ -174,7 +174,7 @@ class TestStrMethod:
     def test_str_method(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "FlexibleDate.__str__",
             "FlexibleDate.toString",
             test_data
@@ -250,7 +250,7 @@ class TestReprMethod:
     def test_repr_method(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "FlexibleDate.__repr__",
             "FlexibleDate.inspect",
             test_data
@@ -310,7 +310,7 @@ class TestEqualsMethod:
     def test_equals_method(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
+        py_result, ts_result = runner.run(
             "FlexibleDate.__eq__",
             "FlexibleDate.equals",
             test_data

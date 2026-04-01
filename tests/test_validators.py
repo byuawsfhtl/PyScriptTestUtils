@@ -6,8 +6,17 @@ from FlexibleDate.FlexibleDate import FlexibleDate
 runner = PyScriptTestRunner(
     Path(__file__).resolve().parent.parent / "dist" / "test_bridge.js",
     serializer = lambda d: {"likelyYear": d.likely_year, "likelyMonth": d.likely_month, "likelyDay": d.likely_day},
-    deserializer = lambda d: FlexibleDate(likely_day=d.likelyDay, likely_month=d.likelyMonth, likely_year=d.likelyYear),
+    deserializer = lambda d: FlexibleDate(likely_day=d["likelyDay"], likely_month=d["likelyMonth"], likely_year=d["likelyYear"]),
 )
+
+def executor(d):
+    try:
+        fd = runner.deserializer(d)
+        return fd
+    except ValueError:
+        return "ValueError"
+
+runner.add_method(FlexibleDate.__init__, "testValidator", executor=executor)
 
 
 class TestYearValidator:
@@ -50,8 +59,8 @@ class TestYearValidator:
     def test_valid_years(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
-            "test_validator",
+        py_result, ts_result = runner.run(
+            "BaseModel.__init__",
             "testValidator",
             test_data
         )
@@ -83,8 +92,8 @@ class TestYearValidator:
     def test_invalid_years(self, test_case):
         test_data = {"input": test_case["input"], "expected": "ValueError", "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
-            "test_validator",
+        py_result, ts_result = runner.run(
+            "BaseModel.__init__",
             "testValidator",
             test_data
         )
@@ -124,8 +133,8 @@ class TestMonthValidator:
     def test_valid_months(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
-            "test_validator",
+        py_result, ts_result = runner.run(
+            "BaseModel.__init__",
             "testValidator",
             test_data
         )
@@ -157,8 +166,8 @@ class TestMonthValidator:
     def test_invalid_months(self, test_case):
         test_data = {"input": test_case["input"], "expected": "ValueError", "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
-            "test_validator",
+        py_result, ts_result = runner.run(
+            "BaseModel.__init__",
             "testValidator",
             test_data
         )
@@ -198,8 +207,8 @@ class TestDayValidator:
     def test_valid_days(self, test_case):
         test_data = {"input": test_case["input"], "expected": test_case["expected"], "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
-            "test_validator",
+        py_result, ts_result = runner.run(
+            "BaseModel.__init__",
             "testValidator",
             test_data
         )
@@ -231,8 +240,8 @@ class TestDayValidator:
     def test_invalid_days(self, test_case):
         test_data = {"input": test_case["input"], "expected": "ValueError", "mocks": {}}
         
-        py_result, ts_result = runner.run_dual_test(
-            "test_validator",
+        py_result, ts_result = runner.run(
+            "BaseModel.__init__",
             "testValidator",
             test_data
         )

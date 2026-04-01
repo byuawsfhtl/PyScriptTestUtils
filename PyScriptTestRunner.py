@@ -76,14 +76,9 @@ class PyScriptTestRunner:
 
     def run(
         self,
-        python_function_name: str,
-        ts_function_name: str,
+        python_function: str,
+        ts_function: str,
         test_data: Dict[str, Any],
-    ) -> tuple[Any, Any]:
-        return self.run_dual_test(python_function_name, ts_function_name, test_data)
-
-    def run_dual_test(
-        self, python_function: str, ts_function: str, test_data: Dict[str, Any]
     ) -> tuple[Any, Any]:
         rec = self._by_py.get(python_function)
         if rec is None:
@@ -101,22 +96,13 @@ class PyScriptTestRunner:
         py_result_holder: Dict[str, Any] = {}
         ts_result_holder: Dict[str, Any] = {}
 
-        def run_python() -> None:
-            py_result_holder["result"] = self._call_python_function_with_mocks(
-                python_function, input_data, mocks.get("python", {}), expected_error
-            )
+        py_result_holder["result"] = self._call_python_function_with_mocks(
+            python_function, input_data, mocks.get("python", {}), expected_error
+        )
 
-        def run_typescript() -> None:
-            ts_result_holder["result"] = self._call_typescript_function_with_mocks(
-                ts_function, input_data, mocks.get("typescript", {}), expected_error
-            )
-
-        t_py = threading.Thread(target=run_python)
-        t_ts = threading.Thread(target=run_typescript)
-        t_py.start()
-        t_ts.start()
-        t_py.join()
-        t_ts.join()
+        ts_result_holder["result"] = self._call_typescript_function_with_mocks(
+            ts_function, input_data, mocks.get("typescript", {}), expected_error
+        )
 
         py_result = py_result_holder.get("result")
         ts_result = ts_result_holder.get("result")
@@ -196,9 +182,8 @@ class PyScriptTestRunner:
                     result = rec.executor(input_data)
                 else:
                     result = rec.py_fn(input_data)
-                if self.serializer is not None:
-                    return self.serializer(result)
-                return result
+                try: return self.serializer(result)
+                except: return result
             finally:
                 for mock_context in reversed(mock_contexts):
                     mock_context.__exit__(None, None, None)
