@@ -11,6 +11,11 @@ export interface TestResponse {
 
 export type TestMethodHandler = (args: any[]) => any;
 
+/**
+ * A bridge that allows Python to call TypeScript functions. Constaints a map of method names to executables.
+ * @param serializer - A function to serialize objects into consistent Json-like structures.
+ * @param plainDeserializer - A function to deserialize objects into an expected custom class.
+ */
 export class PyScriptTestBridge {
 
     constructor(

@@ -307,40 +307,42 @@ class PyScriptTestRunner:
 
     def assert_strict_parity(self, py_result: Any, ts_result: Any, context: str = "") -> None:
         if not self.compare_results(py_result, ts_result):
-            error_details = []
+            return
 
-            if py_result != ts_result:
-                error_details.append(f"Value mismatch: Python={py_result}, TypeScript={ts_result}")
+        error_details = []
 
-            if type(py_result) != type(ts_result):
-                error_details.append(
-                    f"Type mismatch: Python={type(py_result).__name__}, "
-                    f"TypeScript={type(ts_result).__name__}"
-                )
-                error_details.append(f"Python value: {py_result}, TypeScript value: {ts_result}")
+        if py_result != ts_result:
+            error_details.append(f"Value mismatch: Python={py_result}, TypeScript={ts_result}")
 
-            if isinstance(py_result, dict) and isinstance(ts_result, dict):
-                py_keys = set(py_result.keys())
-                ts_keys = set(ts_result.keys())
-
-                if py_keys != ts_keys:
-                    missing_in_ts = py_keys - ts_keys
-                    missing_in_py = ts_keys - py_keys
-                    if missing_in_ts:
-                        error_details.append(f"Fields missing in TypeScript: {missing_in_ts}")
-                    if missing_in_py:
-                        error_details.append(f"Fields missing in Python: {missing_in_py}")
-
-                for key in py_keys & ts_keys:
-                    if type(py_result[key]) != type(ts_result[key]):
-                        error_details.append(
-                            f"Field '{key}' type mismatch: "
-                            f"Python={type(py_result[key]).__name__}, "
-                            f"TypeScript={type(ts_result[key]).__name__}"
-                        )
-
-            context_str = f" ({context})" if context else ""
-            raise AssertionError(
-                f"Implementation parity check failed{context_str}:\n"
-                + "\n".join(f"  - {detail}" for detail in error_details)
+        if type(py_result) != type(ts_result):
+            error_details.append(
+                f"Type mismatch: Python={type(py_result).__name__}, "
+                f"TypeScript={type(ts_result).__name__}"
             )
+            error_details.append(f"Python value: {py_result}, TypeScript value: {ts_result}")
+
+        if isinstance(py_result, dict) and isinstance(ts_result, dict):
+            py_keys = set(py_result.keys())
+            ts_keys = set(ts_result.keys())
+
+            if py_keys != ts_keys:
+                missing_in_ts = py_keys - ts_keys
+                missing_in_py = ts_keys - py_keys
+                if missing_in_ts:
+                    error_details.append(f"Fields missing in TypeScript: {missing_in_ts}")
+                if missing_in_py:
+                    error_details.append(f"Fields missing in Python: {missing_in_py}")
+
+            for key in py_keys & ts_keys:
+                if type(py_result[key]) != type(ts_result[key]):
+                    error_details.append(
+                        f"Field '{key}' type mismatch: "
+                        f"Python={type(py_result[key]).__name__}, "
+                        f"TypeScript={type(ts_result[key]).__name__}"
+                    )
+
+        context_str = f" ({context})" if context else ""
+        raise AssertionError(
+            f"Implementation parity check failed{context_str}:\n"
+            + "\n".join(f"  - {detail}" for detail in error_details)
+        )
