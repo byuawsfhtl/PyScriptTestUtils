@@ -3,11 +3,7 @@ from src.pyscripttestutils.PyScriptTestRunner import PyScriptTestRunner
 from pathlib import Path
 import pytest
 
-_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-runner = PyScriptTestRunner(
-    _REPO_ROOT / "dist" / "tests" / "utils" / "bridge.js",
-    package_root=_REPO_ROOT,
-)
+runner = PyScriptTestRunner(Path(__file__).resolve().parent.parent.parent / "dist" / "tests" / "utils" / "bridge.js")
 runner.add_method(multiply_by_ten, "multiplyByTen")
 runner.add_method(add_two_ints, "addTwoInts", executor=lambda args: add_two_ints(args[0], args[1]))
 
@@ -18,7 +14,7 @@ runner.add_method(add_two_ints, "addTwoInts", executor=lambda args: add_two_ints
 ], ids=["1*10=10", "2*10=20", "3*10=30"])
 def test_multiply_by_ten(a, expected):
     test_data = {
-        "input": [a]
+        "input": a
     }
     py_result, ts_result = runner.run("multiply_by_ten", "multiplyByTen", test_data)
     assert py_result == expected

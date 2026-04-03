@@ -341,6 +341,9 @@ class PyScriptTestRunner:
                         f"TypeScript={type(ts_result[key]).__name__}"
                     )
 
+        if len(error_details) == 0:
+            return
+
         context_str = f" ({context})" if context else ""
         raise AssertionError(
             f"Implementation parity check failed{context_str}:\n"
