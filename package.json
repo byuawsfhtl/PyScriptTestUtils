@@ -1,0 +1,29 @@
+{
+  "name": "pyscripttestutils",
+  "version": "1.0.0",
+  "description": "A package that runs pytests concurrently in both python and TypeScript to enforce equal behavior between packages that support both languages",
+  "homepage": "https://github.com/byuawsfhtl/PyScriptTestUtils#readme",
+  "bugs": {
+    "url": "https://github.com/byuawsfhtl/PyScriptTestUtils/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byuawsfhtl/PyScriptTestUtils.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "dist/PyScriptTestBridge.js",
+  "types": "dist/PyScriptTestBridge.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.6.3"
+  }
+}

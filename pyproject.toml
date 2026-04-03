@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyscripttestutils"
+version = "1.0.0"
+description = "Run pytest-style checks concurrently in Python and TypeScript for dual-language libraries"
+readme = "README.md"
+license = "ISC"
+requires-python = ">=3.9"
+keywords = ["pytest", "typescript", "testing", "dual-language"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/byuawsfhtl/PyScriptTestUtils"
+Repository = "https://github.com/byuawsfhtl/PyScriptTestUtils.git"
+Issues = "https://github.com/byuawsfhtl/PyScriptTestUtils/issues"
