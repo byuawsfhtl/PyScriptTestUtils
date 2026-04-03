@@ -1,4 +1,4 @@
-class CustomClassTS {
+export default class CustomClassTS {
     constructor(public value: number, public myName: string) {}
 
     public equals(other: CustomClassTS): boolean {

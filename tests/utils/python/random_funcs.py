@@ -1,5 +1,7 @@
 from tests.utils.python.CustomClass import CustomClass
 
+def multiply_by_ten(a: int) -> int:
+    return a * 10
 
 def add_two_ints(a: int, b: int) -> int:
     return a + b

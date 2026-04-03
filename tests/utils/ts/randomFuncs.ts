@@ -1,3 +1,9 @@
+import CustomClassTS from "./CustomClassTS"
+
+function multiplyByTen(a: number): number {
+    return a * 10
+}
+
 function addTwoInts(a: number, b: number): number {
     return a + b
 }
@@ -15,3 +21,5 @@ function addThreeInts(a: number, b: number, c: number): number {
     const step2 = addTwoInts(step1, c)
     return step2
 }
+
+export { multiplyByTen, addTwoInts, createCustomClass, printCustomClass, addThreeInts }
