@@ -11,7 +11,7 @@ A package that runs pytest-style checks concurrently in Python and TypeScript so
 
 ```python
 runner = PyScriptTestRunner(
-    "Path/to/test/bridge.ts",
+    "Path/to/built/test/bridge.js",
     (Optional) serializer = function to serialize objects into consistent Json-like structures,
     (Optional) deserializer = function to deserialize objects into an expected custom class.
 )
@@ -34,6 +34,7 @@ py_result, ts_result = runner.run(
 Rules:
 
 - **`add_method(py_callable, ts_method_name, *, ts_pack_input=False)`**  
+  - `path/to/brige` must be the path to the **built** dist of the ts bridge, usually within a dist/ dir. Ex: `Path(__file__).resolve().parent() / "dist" / bridge.js`
   - `py_callable` must be a **named** function (not a lambda). The registry key is `py_callable.__name__` (what you pass as the first argument to `run`).  
   - `ts_method_name` must match `addMethod` on the TS side and the JSON `method` field.  
   - `executor` is some exeutable that processes the test data if neccesary.

@@ -12,4 +12,6 @@ bridge.addMethod("addTwoInts", (args) => {
     return addTwoInts(args[0], args[1]);
 });
 
-export default bridge;
+if (require.main === module) {
+    bridge.runCli();
+}
