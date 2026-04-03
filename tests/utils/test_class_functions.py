@@ -27,15 +27,15 @@ def test_create_custom_class(value, name, expected):
     runner.assert_strict_parity(py_result, ts_result)
 
 @pytest.mark.parametrize("custom_class, expected", [
-    (CustomClass(1, "test"), "test: 1"),
-    (CustomClass(2, "test2"), "test2: 2"),
-    (CustomClass(3, "test3"), "test3: 3"),
+    ({"value": 1, "myName": "test"}, "My name is test and my value is 1"),
+    ({"value": 2, "myName": "test2"}, "My name is test2 and my value is 2"),
+    ({"value": 3, "myName": "test3"}, "My name is test3 and my value is 3"),
 ], ids=["1, test", "2, test2", "3, test3"])
 def test_print_custom_class(custom_class, expected):
     test_data = {
         "input": custom_class
     }
-    py_result, ts_result = runner.run("print_custom_class", "printCustomClass", test_data)
+    py_result, ts_result = runner.run("CustomClass.get_name_and_value", "CustomClassTS.getNameAndValue", test_data)
     assert py_result == expected
     assert ts_result == expected
     runner.assert_strict_parity(py_result, ts_result)

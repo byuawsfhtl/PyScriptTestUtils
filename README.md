@@ -137,7 +137,11 @@ class TestIdenticalDates:
         runner.assert_strict_parity(py_result, ts_result, test_case['description'])
 ```
 
-**It should be noted** that when testing construction of custom classes, the expected test results should be the **serialized** version of the class, as the runner has no way of converting 
+## Notes
+
+- When testing construction of custom classes, the runner will attempt to deserialize the TS result via the provided deserializer function. This means that expected test results **can** be custom classes.
+- When testing custom class methods, the runner cannot deserialize those custom classes, meaning that the input test-data must be provided pre-serialized.
+
 
 ## Developing
 
