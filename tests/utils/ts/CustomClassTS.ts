@@ -26,7 +26,7 @@ export default class CustomClassTS {
         return this.value;
     }
 
-    public printNameAndValue(): void {
-        console.log(`My name is ${this.myName} and my value is ${this.value}`);
+    public getNameAndValue(): string {
+        return `My name is ${this.myName} and my value is ${this.value}`;
     }
 }

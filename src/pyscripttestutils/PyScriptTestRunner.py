@@ -258,7 +258,7 @@ class PyScriptTestRunner:
                     f"TypeScript function failed: {response.get('error', 'Unknown error')}"
                 )
 
-            return response["result"]
+            return self.serializer(self.deserializer(response["result"]))
 
         except json.JSONDecodeError as e:
             if expected_error:

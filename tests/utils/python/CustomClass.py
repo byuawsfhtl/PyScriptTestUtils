@@ -24,5 +24,5 @@ class CustomClass:
         self.value += increment
         return self.value
 
-    def print_name_and_value(self):
-        print(f"My name is {self.my_name} and my value is {self.value}")
+    def get_name_and_value(self) -> str:
+        return f"My name is {self.my_name} and my value is {self.value}"

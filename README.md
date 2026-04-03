@@ -5,7 +5,7 @@ A package that runs pytest-style checks concurrently in Python and TypeScript so
 ## Architecture
 
 - `**PyScriptTestRunner**` (Python): register one **named** Python function per operation with the TypeScript RPC name your Node bridge expects, then call `run` with the same `test_data` shape as before.
-- `**PyScriptTestBridge`** (TypeScript): register handlers with `addMethod(tsName, (args) => response)`. The compiled `**test_bridge_entry.js**` is invoked by the runner via `node`; it parses one JSON request from argv and prints one JSON response.
+- `**PyScriptTestBridge`** (TypeScript): register handlers with `addMethod(tsName, (args) => response)`. The compiled `**test_bridge_entry.js`** is invoked by the runner via `node`; it parses one JSON request from argv and prints one JSON response.
 
 ## Python: registration and `run`
 
@@ -33,13 +33,13 @@ py_result, ts_result = runner.run(
 
 Rules:
 
-- **`add_method(py_callable, ts_method_name, *, ts_pack_input=False)`**  
+- `**add_method(py_callable, ts_method_name, *, ts_pack_input=False)**`  
   - `path/to/brige` must be the path to the **built** dist of the ts bridge, usually within a dist/ dir. Ex: `Path(__file__).resolve().parent() / "dist" / bridge.js`
   - `py_callable` must be a **named** function (not a lambda). The registry key is `py_callable.__name__` (what you pass as the first argument to `run`).  
   - `ts_method_name` must match `addMethod` on the TS side and the JSON `method` field.  
   - `executor` is some exeutable that processes the test data if neccesary.
   - `ts_pack_input=True`: for this operation the runner sends `args: [input_data]` to Node (single array argument). Use this for TS handlers that expect one aggregate argument (for example `combineFlexibleDates` with `const [datesData] = args`).
-- **`run(python_name, ts_name, test_data)`** checks that `ts_name` matches the name registered for `python_name`.
+- `**run(python_name, ts_name, test_data)`** checks that `ts_name` matches the name registered for `python_name`.
 - By default, registered Python callables receive a **single** argument: `test_data["input"]`, and returns the (optionally) serialized result of running the callable on the argument. If more arguments are needed, or if other post-processing on the output is needed, provide a test executor.
 - Serializers and deserializers are optional. If a function is meant to return or take in a custom class, the runner must be provided with (de)serialization function(s), otherwise the data will be treated as raw types (bool, int, float, str, etc...). By default, the deserializer is capable of deserializing lists, so the provided deserialization function only needs to support deserialiation into the given class. The serializer does not support this.
 
@@ -48,6 +48,7 @@ Rules:
 The test bridge contains all that information neccessary for the python runner to call the TS functions under test. It is instantiated with optional serializer and deserializer parameters like the runner.
 
 **Example:**
+
 ```ts
 function serializeFlexibleDate(fd: FlexibleDate): any {
     if (fd.constructor.name === "FlexibleDate") {
@@ -71,7 +72,7 @@ bridge.addMethod("createFlexibleDate", (args) => new FlexibleDate(args[0]));
 
 Rules:
 
-**`addMethod("TSFunctionName, exector)`**
+`**addMethod("TSFunctionName, exector)**`
     - `TSFunctionName` must exactly match an `add_method()` entry on the cooresponding test runner. This is how the runner knows which function to run within the bridge.
     - `executor` must be the test executor function which runs the function under test. Unlike the runner, the bridge has no default executor, and so an executor must be provided with each `addMethod()` call.
 
@@ -83,10 +84,10 @@ Rules:
 
 The subprocess request is `{ "method": string, "args": any[], "mocks": object }`.
 
-- For most operations the runner sets **`args`** from `test_data["input"]` as:
+- For most operations the runner sets `**args`** from `test_data["input"]` as:
   - `[input_data]` when `input_data` is not a `list`,
-  - or **`input_data` as-is** when it is already a `list`.
-- When **`ts_pack_input=True`**, the runner always sends **`args: [input_data]`** (one element), so the TS handler uses `const [x] = args` (for example a list of serialized dates).
+  - or `**input_data` as-is** when it is already a `list`.
+- When `**ts_pack_input=True`**, the runner always sends `**args: [input_data]`** (one element), so the TS handler uses `const [x] = args` (for example a list of serialized dates).
 
 Align Python `input_data` in tests with this contract so both sides see the same logical inputs.
 
@@ -135,6 +136,9 @@ class TestIdenticalDates:
         assert ts_result == test_case["expected"], f"TypeScript failed for {test_case['description']}"
         runner.assert_strict_parity(py_result, ts_result, test_case['description'])
 ```
+
+**It should be noted** that when testing construction of custom classes, the expected test results should be the **serialized** version of the class, as the runner has no way of converting 
+
 ## Developing
 
 ```bash
