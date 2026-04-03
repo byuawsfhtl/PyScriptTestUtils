@@ -14,6 +14,10 @@
   "author": "",
   "type": "commonjs",
   "main": "dist/PyScriptTestBridge.js",
+  "types": "dist/PyScriptTestBridge.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

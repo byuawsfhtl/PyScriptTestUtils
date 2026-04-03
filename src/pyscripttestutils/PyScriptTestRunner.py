@@ -7,6 +7,15 @@ from typing import Any, Callable, Dict, Optional
 from unittest.mock import patch
 
 
+def _default_package_root() -> Path:
+    """Return the directory containing ``package.json``, or this file's directory."""
+    here = Path(__file__).resolve().parent
+    for ancestor in (here, *here.parents):
+        if (ancestor / "package.json").is_file():
+            return ancestor
+    return here
+
+
 @dataclass(frozen=True)
 class RegisteredMethod:
     py_fn: Callable[..., Any]
@@ -32,12 +41,12 @@ class PyScriptTestRunner:
         assert package_root is None or isinstance(package_root, Path)
 
         self.package_root = (
-            package_root if package_root is not None else Path(__file__).resolve().parent
+            package_root if package_root is not None else _default_package_root()
         )
         self.ts_bridge_path = ts_bridge_path
-        
+
         self.serializer = serializer
-        
+
         def list_deserializer(d):
             if isinstance(d, list):
                 try: d = [deserializer(d) for d in d]
@@ -45,7 +54,7 @@ class PyScriptTestRunner:
             try: return deserializer(d)
             except: return d
         self.deserializer = list_deserializer
-        
+
         self._by_py: Dict[str, RegisteredMethod] = {}
         self._by_ts: Dict[str, RegisteredMethod] = {}
 
