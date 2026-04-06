@@ -8,7 +8,14 @@ from unittest.mock import patch
 
 
 def _default_package_root() -> Path:
-    """Return the directory containing ``package.json``, or this file's directory."""
+    """Return the directory containing ``package.json``, or this file's directory.
+    
+    Args:
+        None
+
+    Returns:
+        The directory containing ``package.json``, or this file's directory.
+    """
     here = Path(__file__).resolve().parent
     for ancestor in (here, *here.parents):
         if (ancestor / "package.json").is_file():
@@ -18,6 +25,7 @@ def _default_package_root() -> Path:
 
 @dataclass(frozen=True)
 class RegisteredMethod:
+    """A registered method to be run by the test runner."""
     py_fn: Callable[..., Any]
     ts_name: str
     executor: Optional[Callable[..., Any]] = None
@@ -47,8 +55,6 @@ class PyScriptTestRunner:
             serializer: A function to serialize objects into consistent Json-like structures.
             deserializer: A function to deserialize objects into an expected custom class.
         """
-        assert isinstance(ts_bridge_path, Path)
-        assert package_root is None or isinstance(package_root, Path)
 
         self.package_root = (
             package_root if package_root is not None else _default_package_root()
@@ -57,7 +63,16 @@ class PyScriptTestRunner:
 
         self.serializer = serializer
 
-        def list_deserializer(d):
+        def list_deserializer(d: Any) -> Any:
+            """
+            Deserialize a list or a single item.
+
+            Args:
+                d: The list or single item to deserialize.
+
+            Returns:
+                The deserialized list or single item.
+            """
             if isinstance(d, list):
                 try: d = [deserializer(d) for d in d]
                 except: pass
@@ -73,7 +88,6 @@ class PyScriptTestRunner:
         py_callable: Callable[..., Any],
         ts_method_name: str,
         executor: Optional[Callable[..., Any]] = None,
-        *,
         ts_pack_input: bool = False,
     ) -> None:
         """
@@ -85,7 +99,6 @@ class PyScriptTestRunner:
             executor: An optional executor function to process the test data.
             ts_pack_input: Whether to pack the input data into a single array.
         """
-        assert callable(py_callable)
         if not ts_method_name or not str(ts_method_name).strip():
             raise ValueError("ts_method_name must be non-empty")
         py_key = getattr(py_callable, "__qualname__", None) or getattr(py_callable, "__name__", None)
@@ -297,26 +310,56 @@ class PyScriptTestRunner:
             return False
 
         if isinstance(py_result, dict) and isinstance(ts_result, dict):
-            if set(py_result.keys()) != set(ts_result.keys()):
-                return False
-
-            for key in py_result.keys():
-                py_value = py_result[key]
-                ts_value = ts_result[key]
-
-                if type(py_value) != type(ts_value):
-                    return False
-
-                if isinstance(py_value, dict) and isinstance(ts_value, dict) and not self.compare_results(py_value, ts_value):
-                    return False
+            return self._compare_dicts(py_result, ts_result)
 
         elif isinstance(py_result, list) and isinstance(ts_result, list):
-            if len(py_result) != len(ts_result):
+            return self._compare_lists(py_result, ts_result)
+
+        return True
+
+    def _compare_dicts(self, py_result: Dict[str, Any], ts_result: Dict[str, Any]) -> bool:
+        """
+        Compare two dictionaries.
+
+        Args:
+            py_result: The Python dictionary to compare.
+            ts_result: The TypeScript dictionary to compare.
+
+        Returns:
+            True if the dictionaries are equal, False otherwise.
+        """
+        if set(py_result.keys()) != set(ts_result.keys()):
+            return False
+
+        for key in py_result.keys():
+            py_value = py_result[key]
+            ts_value = ts_result[key]
+
+            if type(py_value) != type(ts_value):
                 return False
 
-            for py_item, ts_item in zip(py_result, ts_result):
-                if not self.compare_results(py_item, ts_item):
-                    return False
+            if isinstance(py_value, dict) and isinstance(ts_value, dict) and not self.compare_results(py_value, ts_value):
+                return False
+        
+        return True
+
+    def _compare_lists(self, py_result: list[Any], ts_result: list[Any]) -> bool:
+        """
+        Compare two lists.
+
+        Args:
+            py_result: The Python list to compare.
+            ts_result: The TypeScript list to compare.
+
+        Returns:
+            True if the lists are equal, False otherwise.
+        """
+        if len(py_result) != len(ts_result):
+            return False
+
+        for py_item, ts_item in zip(py_result, ts_result):
+            if not self.compare_results(py_item, ts_item):
+                return False
 
         return True
 
