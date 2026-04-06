@@ -48,6 +48,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
           npm ci
+          npm run build
 
       - name: Check Test Coverage
         uses: byuawsfhtl/TestCoverageAction@v1.0.0
