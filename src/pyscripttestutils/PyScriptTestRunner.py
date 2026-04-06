@@ -68,11 +68,6 @@ class PyScriptTestRunner:
         self._by_py: Dict[str, RegisteredMethod] = {}
         self._by_ts: Dict[str, RegisteredMethod] = {}
 
-        with PyScriptTestRunner._setup_lock:
-            if not PyScriptTestRunner._environment_initialized:
-                self._setup_environment()
-                PyScriptTestRunner._environment_initialized = True
-
     def add_method(
         self,
         py_callable: Callable[..., Any],
@@ -156,64 +151,6 @@ class PyScriptTestRunner:
         ts_result = ts_result_holder.get("result")
 
         return py_result, ts_result
-
-    def _setup_environment(self) -> None:
-        """
-        Setup the dual-language testing environment.
-        """
-        print("Setting up dual-language testing environment...")
-
-        if not self.ts_bridge_path.exists():
-            if not self._check_nodejs():
-                raise EnvironmentError(
-                    "Node.js not found and TypeScript bridge not compiled. "
-                    "Install Node.js to run dual-language tests.\n"
-                    "Download from: https://nodejs.org/"
-                )
-            self._compile_typescript()
-        else:
-            print("TypeScript bridge found, skipping compilation.")
-
-        print("Environment setup complete.")
-
-    def _check_nodejs(self) -> bool:
-        """
-        Check if Node.js is installed.
-        """
-        try:
-            result = subprocess.run(
-                ["node", "--version"], capture_output=True, text=True
-            )
-            return result.returncode == 0
-        except FileNotFoundError:
-            return False
-
-    def _compile_typescript(self) -> None:
-        """
-        Compile the TypeScript code.
-        """
-        ts_dir = self.package_root
-        try:
-            print("Installing TypeScript dependencies...")
-            result = subprocess.run(
-                ["npm", "ci"], cwd=str(ts_dir), capture_output=True, text=True
-            )
-            if result.returncode != 0:
-                raise RuntimeError(f"Failed to install npm dependencies: {result.stderr}")
-
-            print("Compiling TypeScript...")
-            result = subprocess.run(
-                ["npm", "run", "build"], cwd=str(ts_dir), capture_output=True, text=True
-            )
-            if result.returncode != 0:
-                raise RuntimeError(f"Failed to compile TypeScript: {result.stderr}")
-
-        except FileNotFoundError as exc:
-            raise EnvironmentError(
-                "npm command not found. Ensure Node.js and npm are installed and on PATH.\n"
-                "Download from: https://nodejs.org/\n"
-                "After installation, restart your terminal/IDE and try again."
-            ) from exc
 
     def _call_python_function(
         self,
@@ -395,12 +332,9 @@ class PyScriptTestRunner:
         Raises:
             AssertionError: If the Python and TypeScript results are not strictly equal.
         """
-        if not self.compare_results(py_result, ts_result):
-            return
-
         error_details = []
 
-        if py_result != ts_result:
+        if py_result != ts_result or not self.compare_results(py_result, ts_result):
             error_details.append(f"Value mismatch: Python={py_result}, TypeScript={ts_result}")
 
         if type(py_result) != type(ts_result):
