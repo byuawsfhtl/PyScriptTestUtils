@@ -31,12 +31,22 @@ class PyScriptTestRunner:
     _setup_lock = threading.Lock()
 
     def __init__(
+        
         self,
         ts_bridge_path: Path,
         package_root: Optional[Path] = None,
         serializer: Callable[[Any], Any] = lambda d: d,
         deserializer: Callable[[Any], Any] = lambda d: d
     ) -> None:
+        """
+        Initialize the test runner.
+        
+        Args:
+            ts_bridge_path: The path to the TypeScript bridge.
+            package_root: The root of the package.
+            serializer: A function to serialize objects into consistent Json-like structures.
+            deserializer: A function to deserialize objects into an expected custom class.
+        """
         assert isinstance(ts_bridge_path, Path)
         assert package_root is None or isinstance(package_root, Path)
 
@@ -71,6 +81,15 @@ class PyScriptTestRunner:
         *,
         ts_pack_input: bool = False,
     ) -> None:
+        """
+        Add a method to the test runner.
+
+        Args:
+            py_callable: The Python callable to add.
+            ts_method_name: The name of the TypeScript method to add.
+            executor: An optional executor function to process the test data.
+            ts_pack_input: Whether to pack the input data into a single array.
+        """
         assert callable(py_callable)
         if not ts_method_name or not str(ts_method_name).strip():
             raise ValueError("ts_method_name must be non-empty")
@@ -98,6 +117,17 @@ class PyScriptTestRunner:
         ts_function: str,
         test_data: Dict[str, Any],
     ) -> tuple[Any, Any]:
+        """
+        Run the test.
+
+        Args:
+            python_function: The name of the Python function to run.
+            ts_function: The name of the TypeScript function to run.
+            test_data: The test data to run.
+
+        Returns:
+            A tuple containing the Python and TypeScript results.
+        """
         rec = self._by_py.get(python_function)
         if rec is None:
             raise ValueError(f"Unknown Python function: {python_function!r}")
@@ -114,11 +144,11 @@ class PyScriptTestRunner:
         py_result_holder: Dict[str, Any] = {}
         ts_result_holder: Dict[str, Any] = {}
 
-        py_result_holder["result"] = self._call_python_function_with_mocks(
+        py_result_holder["result"] = self._call_python_function(
             python_function, input_data, mocks.get("python", {}), expected_error
         )
 
-        ts_result_holder["result"] = self._call_typescript_function_with_mocks(
+        ts_result_holder["result"] = self._call_typescript_function(
             ts_function, input_data, mocks.get("typescript", {}), expected_error
         )
 
@@ -128,6 +158,9 @@ class PyScriptTestRunner:
         return py_result, ts_result
 
     def _setup_environment(self) -> None:
+        """
+        Setup the dual-language testing environment.
+        """
         print("Setting up dual-language testing environment...")
 
         if not self.ts_bridge_path.exists():
@@ -144,6 +177,9 @@ class PyScriptTestRunner:
         print("Environment setup complete.")
 
     def _check_nodejs(self) -> bool:
+        """
+        Check if Node.js is installed.
+        """
         try:
             result = subprocess.run(
                 ["node", "--version"], capture_output=True, text=True
@@ -153,6 +189,9 @@ class PyScriptTestRunner:
             return False
 
     def _compile_typescript(self) -> None:
+        """
+        Compile the TypeScript code.
+        """
         ts_dir = self.package_root
         try:
             print("Installing TypeScript dependencies...")
@@ -176,13 +215,29 @@ class PyScriptTestRunner:
                 "After installation, restart your terminal/IDE and try again."
             ) from exc
 
-    def _call_python_function_with_mocks(
+    def _call_python_function(
         self,
         function_name: str,
         input_data: Any,
         mocks: Dict[str, Any],
         expected_error: bool = False,
     ) -> Any:
+        """
+        Call the Python function.
+
+        Args:
+            function_name: The name of the Python function to call.
+            input_data: The input data to pass to the Python function.
+            mocks: The mocks to use for the Python function.
+            expected_error: Whether to expect an error from the Python function.
+
+        Returns:
+            The result of the Python function.
+
+        Raises:
+            ValueError: If the Python function is not found.
+            RuntimeError: If the Python function fails.
+        """
         rec = self._by_py.get(function_name)
         if rec is None:
             raise ValueError(f"Unknown Python function: {function_name!r}")
@@ -211,13 +266,31 @@ class PyScriptTestRunner:
                 return {"error": True, "error_type": type(e).__name__, "error_message": str(e)}
             raise RuntimeError(f"Python function {function_name} failed: {str(e)}") from e
 
-    def _call_typescript_function_with_mocks(
+    def _call_typescript_function(
         self,
         function_name: str,
         input_data: Any,
         mocks: Dict[str, Any],
         expected_error: bool = False,
     ) -> Any:
+        """
+        Call the TypeScript function.
+        
+        Args:
+            function_name: The name of the TypeScript function to call.
+            input_data: The input data to pass to the TypeScript function.
+            mocks: The mocks to use for the TypeScript function.
+            expected_error: Whether to expect an error from the TypeScript function.
+
+        Returns:
+            The result of the TypeScript function.
+
+        Raises:
+            ValueError: If the TypeScript function is not found.
+            RuntimeError: If the TypeScript function fails.
+            json.JSONDecodeError: If the TypeScript response is not valid JSON.
+            Exception: If the TypeScript function fails for any other reason.
+        """
         rec = self._by_ts.get(function_name)
         if rec is None:
             raise ValueError(f"Unknown TypeScript function: {function_name!r}")
@@ -249,11 +322,7 @@ class PyScriptTestRunner:
 
             if not response.get("success", False):
                 if expected_error:
-                    return {
-                        "error": True,
-                        "error_type": "Error",
-                        "error_message": response.get("error", "Unknown error"),
-                    }
+                    return {"error": True, "error_type": "Error", "error_message": response.get("error", "Unknown error")}
                 raise RuntimeError(
                     f"TypeScript function failed: {response.get('error', 'Unknown error')}"
                 )
@@ -270,6 +339,16 @@ class PyScriptTestRunner:
             raise RuntimeError(f"TypeScript function {function_name} failed: {str(e)}") from e
 
     def compare_results(self, py_result: Any, ts_result: Any) -> bool:
+        """
+        Compare the Python and TypeScript results.
+
+        Args:
+            py_result: The Python result to compare.
+            ts_result: The TypeScript result to compare.
+
+        Returns:
+            True if the results are equal, False otherwise.
+        """
         if isinstance(py_result, dict) and isinstance(ts_result, dict):
             if py_result.get("error") is True and ts_result.get("error") is True:
                 return True
@@ -291,9 +370,8 @@ class PyScriptTestRunner:
                 if type(py_value) != type(ts_value):
                     return False
 
-                if isinstance(py_value, dict) and isinstance(ts_value, dict):
-                    if not self.compare_results(py_value, ts_value):
-                        return False
+                if isinstance(py_value, dict) and isinstance(ts_value, dict) and not self.compare_results(py_value, ts_value):
+                    return False
 
         elif isinstance(py_result, list) and isinstance(ts_result, list):
             if len(py_result) != len(ts_result):
@@ -306,6 +384,17 @@ class PyScriptTestRunner:
         return True
 
     def assert_strict_parity(self, py_result: Any, ts_result: Any, context: str = "") -> None:
+        """
+        Assert that the Python and TypeScript results are strictly equal.
+
+        Args:
+            py_result: The Python result to compare.
+            ts_result: The TypeScript result to compare.
+            context: The context of the comparison.
+
+        Raises:
+            AssertionError: If the Python and TypeScript results are not strictly equal.
+        """
         if not self.compare_results(py_result, ts_result):
             return
 
@@ -335,11 +424,7 @@ class PyScriptTestRunner:
 
             for key in py_keys & ts_keys:
                 if type(py_result[key]) != type(ts_result[key]):
-                    error_details.append(
-                        f"Field '{key}' type mismatch: "
-                        f"Python={type(py_result[key]).__name__}, "
-                        f"TypeScript={type(ts_result[key]).__name__}"
-                    )
+                    error_details.append(f"Field '{key}' type mismatch: Python={type(py_result[key]).__name__}, TypeScript={type(ts_result[key]).__name__}")
 
         if len(error_details) == 0:
             return
