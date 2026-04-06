@@ -1,6 +1,6 @@
 import { PyScriptTestBridge } from "../../src/PyScriptTestBridge";
 
-import { addTwoInts, createCustomClass, multiplyByTen } from "./ts/randomFuncs";
+import { multiplyByTen, addTwoInts, createCustomClass } from "./ts/randomFuncs";
 import CustomClassTS from "./ts/CustomClassTS";
 
 function serializeCustomClass(customClass: CustomClassTS): any {
@@ -28,6 +28,15 @@ bridge.addMethod("multiplyByTen", (args) => {
 bridge.addMethod("addTwoInts", (args) => {
     return addTwoInts(args[0], args[1]);
 });
+
+// bridge.addMethod("addThreeInts", (args) => {
+//     const spy = jest.spyOn(functions, "addTwoInts").mockImplementation(() => 42);
+//     try {
+//         return functions.addThreeInts(args[0], args[1], args[2]);
+//     } finally {
+//         spy.mockRestore();
+//     }
+// });
 
 bridge.addMethod("createCustomClass", (args) => {
     return createCustomClass(args[0], args[1]);
