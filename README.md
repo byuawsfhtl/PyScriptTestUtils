@@ -4,14 +4,14 @@ A package that runs pytest-style checks concurrently in Python and TypeScript so
 
 ## Architecture
 
-- `**PyScriptTestRunner**` (Python): register one **named** Python function per operation with the TypeScript RPC name your Node bridge expects, then call `run` with the same `test_data` shape as before.
-- `**PyScriptTestBridge`** (TypeScript): register handlers with `addMethod(tsName, (args) => response)`. The compiled `**test_bridge_entry.js**` is invoked by the runner via `node`; it parses one JSON request from argv and prints one JSON response.
+- **`PyScriptTestRunner`** (Python): register one **named** Python function per operation with the TypeScript RPC name your Node bridge expects, then call `run` with the same `test_data` shape as before.
+- **`PyScriptTestBridge`** (TypeScript): register handlers with `addMethod(tsName, (args) => response)`. The compiled **`test_bridge_entry.js`** is invoked by the runner via `node`; it parses one JSON request from argv and prints one JSON response.
 
 ## Python: registration and `run`
 
 ```python
 runner = PyScriptTestRunner(
-    "Path/to/test/bridge.ts",
+    "Path/to/built/test/bridge.js",
     (Optional) serializer = function to serialize objects into consistent Json-like structures,
     (Optional) deserializer = function to deserialize objects into an expected custom class.
 )
@@ -34,6 +34,7 @@ py_result, ts_result = runner.run(
 Rules:
 
 - **`add_method(py_callable, ts_method_name, *, ts_pack_input=False)`**  
+  - `path/to/brige` must be the path to the **built** dist of the ts bridge, usually within a dist/ dir. Ex: `Path(__file__).resolve().parent() / "dist" / bridge.js`
   - `py_callable` must be a **named** function (not a lambda). The registry key is `py_callable.__name__` (what you pass as the first argument to `run`).  
   - `ts_method_name` must match `addMethod` on the TS side and the JSON `method` field.  
   - `executor` is some exeutable that processes the test data if neccesary.
@@ -47,6 +48,7 @@ Rules:
 The test bridge contains all that information neccessary for the python runner to call the TS functions under test. It is instantiated with optional serializer and deserializer parameters like the runner.
 
 **Example:**
+
 ```ts
 function serializeFlexibleDate(fd: FlexibleDate): any {
     if (fd.constructor.name === "FlexibleDate") {
@@ -134,6 +136,13 @@ class TestIdenticalDates:
         assert ts_result == test_case["expected"], f"TypeScript failed for {test_case['description']}"
         runner.assert_strict_parity(py_result, ts_result, test_case['description'])
 ```
+
+## Notes
+
+- When testing construction of custom classes, the runner will attempt to deserialize the TS result via the provided deserializer function. This means that expected test results **can** be custom classes.
+- When testing custom class methods, the runner cannot deserialize those custom classes, meaning that the input test-data must be provided pre-serialized.
+
+
 ## Developing
 
 ```bash
