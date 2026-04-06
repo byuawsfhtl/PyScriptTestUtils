@@ -14,8 +14,7 @@ from tests.utils.python.random_funcs import (
 )
 
 BRIDGE = (
-    Path(__file__).resolve().parent.parent.parent
-    / "dist" / "tests" / "utils" / "bridge.js"
+    Path(__file__).resolve().parent.parent.parent / "dist" / "tests" / "utils" / "bridge.js"
 )
 SUBPROCESS_PATH = "src.pyscripttestutils.PyScriptTestRunner.subprocess.run"
 
