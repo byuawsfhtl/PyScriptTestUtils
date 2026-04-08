@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches: [prd, dev]
-    paths-ignore: # Pushes that include only these changed files won't trigger actions
+    paths-ignore: # Pushes that include only these changed files won't trigger
       - "**/.gitignore"
       - "**/tests/*"
       - "**/_version.py"
