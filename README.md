@@ -45,7 +45,7 @@ Rules:
 
 ## TypeScript: `test_bridge.ts`
 
-The test bridge contains all that information neccessary for the python runner to call the TS functions under test. It is instantiated with optional serializer and deserializer parameters like the runner.
+The test bridge contains all that information neccessary for the python runner to call the TS functions under test. It is instantiated with optional serializer and deserializer parameters like the runner. It must be compiled with the source code.
 
 **Example:**
 
