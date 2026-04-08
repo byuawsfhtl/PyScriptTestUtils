@@ -4,10 +4,7 @@ on:
   push:
     branches: [prd, dev]
     paths-ignore: # Pushes that include only these changed files won't trigger actions
-      - "**/README.md"
       - "**/.gitignore"
-      - "**/docs/*"
-      - "**/.github/*"
       - "**/tests/*"
       - "**/_version.py"
 
