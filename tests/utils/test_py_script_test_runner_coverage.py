@@ -272,7 +272,7 @@ class TestCallTypescriptFunction:
         mock_proc = Mock(
             returncode=0,
             stderr="console.log debug info",
-            stdout=json.dumps({"success": True, "result": 50}),
+            stdout=json.dumps({"success": True, "result": 50}, ensure_ascii=False).encode('utf-8'),
         )
         with patch(SUBPROCESS_PATH, return_value=mock_proc):
             result = runner._call_typescript_function("multiplyByTen", 5, {})
@@ -296,7 +296,7 @@ class TestCallTypescriptFunction:
         mock_proc = Mock(
             returncode=0,
             stderr="",
-            stdout=json.dumps({"success": True, "result": {"value": 1, "myName": "a"}}),
+            stdout=json.dumps({"success": True, "result": {"value": 1, "myName": "a"}}, ensure_ascii=False).encode('utf-8'),
         )
         with patch(SUBPROCESS_PATH, return_value=mock_proc):
             result = runner._call_typescript_function("createCustomClass", [1, "a"], {})
@@ -310,7 +310,7 @@ class TestCallTypescriptFunction:
 
         def fake_run(cmd, **_kwargs):
             captured["args"] = json.loads(cmd[2])["args"]
-            return Mock(returncode=0, stderr="", stdout=json.dumps({"success": True, "result": 50}))
+            return Mock(returncode=0, stderr="", stdout=json.dumps({"success": True, "result": 50}, ensure_ascii=False).encode('utf-8'))
 
         with patch(SUBPROCESS_PATH, side_effect=fake_run):
             runner._call_typescript_function("multiplyByTen", 5, {})
@@ -344,7 +344,7 @@ class TestCallTypescriptFunction:
 
         def fake_run(cmd, **_kwargs):
             captured["args"] = json.loads(cmd[2])["args"]
-            return Mock(returncode=0, stderr="", stdout=json.dumps({"success": True, "result": 30}))
+            return Mock(returncode=0, stderr="", stdout=json.dumps({"success": True, "result": 30}, ensure_ascii=False).encode('utf-8'))
 
         with patch(SUBPROCESS_PATH, side_effect=fake_run):
             runner._call_typescript_function("multiplyByTen", [3], {})

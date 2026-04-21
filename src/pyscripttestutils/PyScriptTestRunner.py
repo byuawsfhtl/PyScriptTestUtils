@@ -254,7 +254,7 @@ class PyScriptTestRunner:
             request = {"method": function_name, "args": args, "mocks": mocks}
 
             result = subprocess.run(
-                ["node", str(self.ts_bridge_path), json.dumps(request)],
+                ["node", str(self.ts_bridge_path), json.dumps(request, ensure_ascii=False).encode('utf-8')],
                 capture_output=True,
                 text=True,
                 cwd=str(self.package_root),
@@ -306,7 +306,7 @@ class PyScriptTestRunner:
         if py_result != ts_result:
             return False
 
-        if type(py_result) != type(ts_result):
+        if type(py_result) is not type(ts_result):
             return False
 
         if isinstance(py_result, dict) and isinstance(ts_result, dict):
@@ -335,7 +335,7 @@ class PyScriptTestRunner:
             py_value = py_result[key]
             ts_value = ts_result[key]
 
-            if type(py_value) != type(ts_value):
+            if type(py_value) is not type(ts_value):
                 return False
 
             if isinstance(py_value, dict) and isinstance(ts_value, dict) and not self.compare_results(py_value, ts_value):
@@ -380,7 +380,7 @@ class PyScriptTestRunner:
         if py_result != ts_result or not self.compare_results(py_result, ts_result):
             error_details.append(f"Value mismatch: Python={py_result}, TypeScript={ts_result}")
 
-        if type(py_result) != type(ts_result):
+        if type(py_result) is not type(ts_result):
             error_details.append(
                 f"Type mismatch: Python={type(py_result).__name__}, "
                 f"TypeScript={type(ts_result).__name__}"
@@ -400,7 +400,7 @@ class PyScriptTestRunner:
                     error_details.append(f"Fields missing in Python: {missing_in_py}")
 
             for key in py_keys & ts_keys:
-                if type(py_result[key]) != type(ts_result[key]):
+                if type(py_result[key]) is not type(ts_result[key]):
                     error_details.append(f"Field '{key}' type mismatch: Python={type(py_result[key]).__name__}, TypeScript={type(ts_result[key]).__name__}")
 
         if len(error_details) == 0:
