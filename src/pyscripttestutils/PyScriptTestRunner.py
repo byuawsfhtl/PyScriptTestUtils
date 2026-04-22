@@ -78,6 +78,7 @@ class PyScriptTestRunner:
                 except: pass
             try: return deserializer(d)
             except: return d
+
         self.deserializer = list_deserializer
 
         self._by_py: Dict[str, RegisteredMethod] = {}
@@ -258,6 +259,7 @@ class PyScriptTestRunner:
                 capture_output=True,
                 text=True,
                 cwd=str(self.package_root),
+                encoding='utf-8'
             )
 
             if result.stderr:
